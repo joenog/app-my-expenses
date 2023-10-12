@@ -1,52 +1,122 @@
-//CLASS DESPESAS
+//CLASS EXPENSES
 class Despesa {
-    constructor(ano, mes, dia, tipo, descricao, valor) {
-        this.ano = ano;
-        this.mes = mes;
-        this.dia = dia;
-        this.tipo = tipo;
-        this.descricao = descricao;
-        this.valor = valor;
-    }
+    constructor(year, month, day, type, description, value) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.type = type;
+        this.description = description;
+        this.value = value;
+    };
+    //VALIDAR DADOS
+    validateData() {
+        for (let i in this) {
+            if(this[i] == undefined || this[i] == '' || this[i] == null) {
+                return false;
+            };
+        };
+        return true;
+    };
 };
-/* CADASTRO E PESSOAS - ARMAZENAR DADOS */
+
+// REGISTRATION N PEOPLE - STORE DATA
 class Bd {
     constructor() {
-        // RECUPERAÇÃO DO INDICE CASO HAJA
+        // RECUPERAR INDICE CASO HAJA
         let id = localStorage.getItem('id');
-        // CASO N HAJA INDICE ELE SERÁ CRIADO INICIANDO EM 0
         if (id === null) {
             localStorage.setItem('id', 0);
-        }; // CASO JA TENHA ID ELE SERÁ RECUPERADO NO INICIO
+        };
     };
     //FUNCAO PARA RECUPERAR NOVO ID - caso exista
-    getProximoId() {
-        let proximoId = parseInt(localStorage.getItem('id'));
-        return proximoId +1;
+    getNextId() {
+        let nextId = parseInt(localStorage.getItem('id'));
+        return nextId +1;
     };
-    // FUNCAO PARFA A INCLUSAO DE NOVAS DESPESAS 
-    gravar(desp) {
-        let id = this.getProximoId();
-        localStorage.setItem(id, JSON.stringify(desp)); //TRANSFORMO OBJETO EM JSON PARA GUARDALO
+    // FUNCAO PARA A INCLUSAO DE NOVAS DESPESAS 
+    gravar(expen) {
+        let id = this.getNextId();
+        localStorage.setItem(id, JSON.stringify(expen)); //TRANSFORM OBJECT TO JSON
         localStorage.setItem('id', id);
     };
+    //FUNCAO PARA RECUPERAR REGISTROS
+    showExpenses() {
+        let arrayExpenses = [];
+        let id = localStorage.getItem('id');
+        //RECUPER TODAS AS DESPESAS EM LOCALSTORAGE
+        for (let i = 1; i <= id; i++) {
+            let expenses = JSON.parse(localStorage.getItem(i)); //RECOVER EXPENSES
+            //INDICES PULADOS OU REMOVIDOS
+            if (expenses === null) {
+                continue;
+            }
+            arrayExpenses.push(expenses);
+        };
+        return arrayExpenses;
+    };
 };
-// instancia da nova despesa
+// INSTANCE NEW EXPENSE
 let bd = new Bd();
-// FIM DO CADASTRO DE PESSOAS
 
 /* BOTAO DE ENVIO DOS DADOS */
-const addDespesa = document.getElementById('addDespesa');
-addDespesa.addEventListener('click', ()=> {
+const addExpense = document.getElementById('addExpense');
+addExpense.addEventListener('click', ()=> {
     // SELECINAR ELEMENTOS A SEREM ENVIADOS
-    const ano = document.getElementById("ano");
-    const mes = document.getElementById("mes");
-    const dia = document.getElementById("dia");
-    const tipo = document.getElementById("tipo");
-    const descricao = document.getElementById("descricao");
-    const valor = document.getElementById("valor");
+    const year = document.getElementById("year");
+    const month = document.getElementById("month");
+    const day = document.getElementById("day");
+    const type = document.getElementById("type");
+    const description = document.getElementById("description");
+    const value = document.getElementById("value");
     // INSTANCIA NOVA DESPESA
-    let despesa = new Despesa(ano.value, mes.value, dia.value, tipo.value, descricao.value, valor.value);
-    // CHAMADA DA FUNCAO DO OBJETO
-    bd.gravar(despesa);
+    let expenses = new Despesa(
+        year.value,
+        month.value, 
+        day.value, 
+        type.value, 
+        description.value, 
+        value.value);
+
+    // VAILIDAR DADOS
+    if(expenses.validateData()) {
+        bd.gravar(expenses);
+        // MODIFICAR ELEMENTOS QUANDO FOR ADICIONADA DESPESA
+        document.getElementById('exampleModalLabel').innerText = 'Added';
+        document.getElementById('textModal').innerText = `Expense saved successfully!`;
+        document.getElementById('exampleModalLabel').className = 'modal-title text-success';
+        document.getElementById('btnModal').className = 'btn btn-success';
+        $('#registraDespesa').modal('show');
+    } else {
+        document.getElementById('textModal').innerText = `Fill in the fields to add...`;
+        $('#registraDespesa').modal('show');
+    };
 });
+
+function listExpenses() {
+    let allExpenses = []; // NEW ARRAY TO RESTORE EXPENSES
+    allExpenses = bd.showExpenses();
+    //ELEMENT TBODY - TABLE LIST
+    const listExpen = document.getElementById('listExpenses');
+    allExpenses.forEach(function(d) {
+        console.log(d)
+        //CREATE ROW(TR) - LET ARMAZENA LINHA CRIADA
+        let line = listExpen.insertRow();
+        //CREATE CELL(TD) - LINHA CRIADA ARMAZENA VARIAS CELULAS
+        line.insertCell(0).innerText = `${d.day}/${d.month}/${d.year}`; // FIRST LINE DATE
+        // AJUST TYPE, NAME ATRIBUT
+        switch(d.type) {
+            case '1': d.type = 'Food'
+                break
+            case '2': d.type = 'Education'
+                break
+            case '3': d.type = 'Leisure'
+                break
+            case '4': d.type = 'Health'
+                break
+            case '5': d.type = 'Transport'
+        };
+        line.insertCell(1).innerText = `${d.type}`;
+        line.insertCell(2).innerText = `${d.description}`;
+        line.insertCell(3).innerText = `${d.value}`;
+    });
+};
