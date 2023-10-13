@@ -54,20 +54,32 @@ class Bd {
         };
         return arrayExpenses;
     };
+    
 };
 // INSTANCE NEW EXPENSE
 let bd = new Bd();
 
-/* BOTAO DE ENVIO DOS DADOS */
-const addExpense = document.getElementById('addExpense');
-addExpense.addEventListener('click', ()=> {
-    // SELECINAR ELEMENTOS A SEREM ENVIADOS
-    const year = document.getElementById("year");
-    const month = document.getElementById("month");
-    const day = document.getElementById("day");
-    const type = document.getElementById("type");
-    const description = document.getElementById("description");
-    const value = document.getElementById("value");
+// SELECINAR ELEMENTOS A SEREM ENVIADOS
+let year = document.getElementById("year");
+let month = document.getElementById("month");
+let day = document.getElementById("day");
+let type = document.getElementById("type");
+let description = document.getElementById("description");
+let value = document.getElementById("value");
+
+let clearFill = () => {
+
+    //CLEAR FILLS
+    year.value = '';
+    month.value = '';
+    day.value = '';
+    type.value = '';
+    description.value = '';
+    value.value = '';
+}
+
+// BOTAO DE ENVIO DOS DADOS
+function addExpense () {
     // INSTANCIA NOVA DESPESA
     let expenses = new Despesa(
         year.value,
@@ -77,7 +89,7 @@ addExpense.addEventListener('click', ()=> {
         description.value, 
         value.value);
 
-    // VAILIDAR DADOS
+    // CAIXA MSG VAILIDAR DADOS
     if(expenses.validateData()) {
         bd.gravar(expenses);
         // MODIFICAR ELEMENTOS QUANDO FOR ADICIONADA DESPESA
@@ -90,19 +102,20 @@ addExpense.addEventListener('click', ()=> {
         document.getElementById('textModal').innerText = `Fill in the fields to add...`;
         $('#registraDespesa').modal('show');
     };
-});
-
+    clearFill();
+};
+//LISTAGEM DESPESAS
 function listExpenses() {
     let allExpenses = []; // NEW ARRAY TO RESTORE EXPENSES
     allExpenses = bd.showExpenses();
     //ELEMENT TBODY - TABLE LIST
-    const listExpen = document.getElementById('listExpenses');
+    let listExpen = document.getElementById('listExpenses');
     allExpenses.forEach(function(d) {
-        console.log(d)
+        //console.log(d)
         //CREATE ROW(TR) - LET ARMAZENA LINHA CRIADA
         let line = listExpen.insertRow();
         //CREATE CELL(TD) - LINHA CRIADA ARMAZENA VARIAS CELULAS
-        line.insertCell(0).innerText = `${d.day}/${d.month}/${d.year}`; // FIRST LINE DATE
+        line.insertCell(0).innerText = `${d.day}/${d.month}/${d.year}`; // 0FIRST LINE DATE
         // AJUST TYPE, NAME ATRIBUT
         switch(d.type) {
             case '1': d.type = 'Food'
@@ -120,3 +133,10 @@ function listExpenses() {
         line.insertCell(3).innerText = `${d.value}`;
     });
 };
+
+function searchExpense() {
+
+    let searchExpen = new Despesa(year.value, month.value, day.value, type.value, description.value, value.value);
+
+        console.log(searchExpen)
+    };
