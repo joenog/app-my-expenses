@@ -1,142 +1,148 @@
-//CLASS EXPENSES
+//2 SEGUNDO------ CLASSE PARA CRIAÇAO DE NOVAS DESPESAS
 class Despesa {
-    constructor(year, month, day, type, description, value) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
-        this.type = type;
-        this.description = description;
-        this.value = value;
+    constructor(ano, mes, dia, tipo, descricao, valor) {
+        this.ano = ano;
+        this.mes = mes;
+        this.dia = dia;
+        this.tipo = tipo;
+        this.descricao = descricao;
+        this.valor = valor;
     };
-    //VALIDAR DADOS
-    validateData() {
-        for (let i in this) {
-            if(this[i] == undefined || this[i] == '' || this[i] == null) {
+    //6----- VALIDAR DESPESAS
+    validarDespesa() {
+        for(let i in this) {
+            if( this[i] === null || this[i] === undefined || this[i] == '') {
                 return false;
             };
         };
-        return true;
+        return true
     };
 };
 
-// REGISTRATION N PEOPLE - STORE DATA
+//5 ---- CRIADO BANCO DE DADOS PARA CRIAR O ID E ARMAZENAR NELE OS DADOS INSERIDOS NO INPUT
 class Bd {
+    //5.1----- RIANDO O ID INICIAL 
     constructor() {
-        // RECUPERAR INDICE CASO HAJA
         let id = localStorage.getItem('id');
+
         if (id === null) {
-            localStorage.setItem('id', 0);
+            localStorage.setItem('id', 0)
         };
     };
-    //FUNCAO PARA RECUPERAR NOVO ID - caso exista
-    getNextId() {
-        let nextId = parseInt(localStorage.getItem('id'));
-        return nextId +1;
+    //5----- DEFININDO QUAL SERÁ O PROXIMO ID
+     getProximoId() {
+        let proximoId = parseInt(localStorage.getItem('id'));
+        return proximoId + 1;
+     };
+
+    // 4.1----- AO GRAVAR TRANSFORMO O OBJETO LITERAL EM STRING
+    gravar(d) {
+        //FUNCAO CHAMA LOCALSTORAGE E PELO PARAMETR DA FUNÇÃO ENVIA A INSTANCIA DA DESPESA E A TRANSFORMA EM STRING
+        let id = this.getProximoId(); //VARIAVEL QUE RECEBE O PROXIMO ID INICIAD OE ICREMENTADO ACIMA
+        localStorage.setItem(id, JSON.stringify(d)); // E RECEBER A STRING DA DESPESA INSERIDA
+        localStorage.setItem('id', id); // SETO PARA O LOCALSTORAGE RECEBER O VALOR DA VARIAVEL ID
     };
-    // FUNCAO PARA A INCLUSAO DE NOVAS DESPESAS 
-    gravar(expen) {
-        let id = this.getNextId();
-        localStorage.setItem(id, JSON.stringify(expen)); //TRANSFORM OBJECT TO JSON
-        localStorage.setItem('id', id);
-    };
-    //FUNCAO PARA RECUPERAR REGISTROS
-    showExpenses() {
-        let arrayExpenses = [];
+
+    //7.1----- RECUPERANDO REGISTROS PARA SER MOSTRADOS
+    recuperarTodosRegistros() {
+        //ARRAY DE DESPESAS
+        let despesas = [];
+
         let id = localStorage.getItem('id');
-        //RECUPER TODAS AS DESPESAS EM LOCALSTORAGE
-        for (let i = 1; i <= id; i++) {
-            let expenses = JSON.parse(localStorage.getItem(i)); //RECOVER EXPENSES
-            //INDICES PULADOS OU REMOVIDOS
-            if (expenses === null) {
+        //ASSIM POSSO RECUPERAR TODAS AS DEPSESAS CADASTRADAS EM LOCALSTORAGE
+        for(let i = 1; i <= id; i++) {
+            //RECUPERANDO AS DESPEAS 
+            let despesa = JSON.parse(localStorage.getItem(i));
+
+            //VERIFICAÃO DE ITENS PULADOS OU REMOVIDO
+            if (despesa === null) {
                 continue;
-            }
-            arrayExpenses.push(expenses);
+            } else {
+                despesas.push(despesa);
+            };
         };
-        return arrayExpenses;
+        return despesas; // ENVIA AO FIM O ARRAY DE TODAS AS DESPESAS
     };
-    
 };
-// INSTANCE NEW EXPENSE
-let bd = new Bd();
 
-// SELECINAR ELEMENTOS A SEREM ENVIADOS
-let year = document.getElementById("year");
-let month = document.getElementById("month");
-let day = document.getElementById("day");
-let type = document.getElementById("type");
-let description = document.getElementById("description");
-let value = document.getElementById("value");
+// 5.1----- NOVA INSTACIA E BANCO DE DADOS
+const bd = new Bd();
 
-let clearFill = () => {
+// 9---- FUNCAO PARA LIMPAR INPUTS
+const limparInputs = () => {
+    ano.value = '';
+    mes.value = '';
+    dia.value = '';
+    tipo.value = '';
+    descricao.value = '';
+    valor.value = '';
+};
 
-    //CLEAR FILLS
-    year.value = '';
-    month.value = '';
-    day.value = '';
-    type.value = '';
-    description.value = '';
-    value.value = '';
-}
+//1 PRIMEIRO----- FUNÇÃO CRIARÁ UMA NOVA DESPESA INSERIDA NOS IMPUTS SEMPRE QUE CLICADA
+function cadastrarDespesa() {
+    //SELECAO DOS ELEMENTOS DA PAGINA
+    const ano = document.getElementById('ano');
+    const mes = document.getElementById('mes');
+    const dia = document.getElementById('dia');
+    const tipo = document.getElementById('tipo');
+    const descricao = document.getElementById('descricao');
+    const valor = document.getElementById('valor');
 
-// BOTAO DE ENVIO DOS DADOS
-function addExpense () {
-    // INSTANCIA NOVA DESPESA
-    let expenses = new Despesa(
-        year.value,
-        month.value, 
-        day.value, 
-        type.value, 
-        description.value, 
-        value.value);
-
-    // CAIXA MSG VAILIDAR DADOS
-    if(expenses.validateData()) {
-        bd.gravar(expenses);
-        // MODIFICAR ELEMENTOS QUANDO FOR ADICIONADA DESPESA
-        document.getElementById('exampleModalLabel').innerText = 'Added';
-        document.getElementById('textModal').innerText = `Expense saved successfully!`;
-        document.getElementById('exampleModalLabel').className = 'modal-title text-success';
+    //3 TERCEIRO------  INSTACIA DEPESAq RECEBE VALORES INSERIDOS NO INPUT
+    let despesa = new Despesa(ano.value, mes.value, dia.value, tipo.value, descricao.value, valor.value);
+    //6.1 CONDICIONAL PARA INSERIR OBJETOS NO BANDO DE DADOS
+    if (despesa.validarDespesa()) {
+        //4.0 NOVA FUNCAÇÃO QUE RECEBE O OBJETO LITERAL CRIADO ACIMA
+        bd.gravar(despesa);
+        //DIALOG DE SUCESSO
+        document.getElementById('exampleModalLabel').innerText = 'Despesa adicionada';
+        document.getElementById('msgModal').innerText = 'Despesa adicionada com sucesso';
+        document.getElementById('exampleModalLabel').className = 'text-success';
         document.getElementById('btnModal').className = 'btn btn-success';
-        $('#registraDespesa').modal('show');
+        $('#modalGravacao').modal('show');
     } else {
-        document.getElementById('textModal').innerText = `Fill in the fields to add...`;
-        $('#registraDespesa').modal('show');
+        //DIALOG DE ERRO JQUERY
+        $('#modalGravacao').modal('show');
     };
-    clearFill();
+    limparInputs();
 };
-//LISTAGEM DESPESAS
-function listExpenses() {
-    let allExpenses = []; // NEW ARRAY TO RESTORE EXPENSES
-    allExpenses = bd.showExpenses();
-    //ELEMENT TBODY - TABLE LIST
-    let listExpen = document.getElementById('listExpenses');
-    allExpenses.forEach(function(d) {
-        //console.log(d)
-        //CREATE ROW(TR) - LET ARMAZENA LINHA CRIADA
-        let line = listExpen.insertRow();
-        //CREATE CELL(TD) - LINHA CRIADA ARMAZENA VARIAS CELULAS
-        line.insertCell(0).innerText = `${d.day}/${d.month}/${d.year}`; // 0FIRST LINE DATE
-        // AJUST TYPE, NAME ATRIBUT
-        switch(d.type) {
-            case '1': d.type = 'Food'
+//7----- FUNCTION PARA LISTAR OS REGISTROS NA PAGINA DE REGISTRO
+function carregaListaDespesas() {
+    //COPIA DE ARRAY PARA MOSTRAR DESPESAS
+    let despesas = [];
+    despesas = bd.recuperarTodosRegistros(); // FUNCAO CRIADA E CHAMADA DENTRO DO BANCO DE DADOS
+    // SELECIONANDO O ELEMENTO TBODY DA TABELA
+    let listaDespesas = document.getElementById('listaDespesas');
+
+    /*<tr>
+        <td>20/09/2026</td>
+        <td>Alimentacao</td>
+        <td>Ifood</td>
+        <td>20,63</td>
+    </tr> */
+
+    //8----- PERCORRER O ARRAY DESPESAS LISTANDO CADA UMA DE FORMA DINAMICA
+    despesas.forEach(d => {
+        //CRIANDO A LINHA <TR>
+        let linha = listaDespesas.insertRow();
+        //CRIADO UMA LINHA E NELA ADICIONADA CELULAS QUE RECEBEM DINAMICAMENTE PELO FOREACH OS PARAMETOS DO D.
+        //CRIAANDO COLUNAS <TD> // AQUI A INSERÇÃO DINAMICA DO PARAMETRO D RECUPERANDO SEUS ATRIBUTOS
+        linha.insertCell(0).innerText = `${d.dia}/${d.mes}/${d.ano}`; // PRIMEIRA CELULAR DATA
+        //USANDO CASE PARA MODIFICA VAOR DO TIPO, INSERIR NOME AO INVER DA CHAVE
+        switch(d.tipo) {
+            case '1' : d.tipo = 'Alimentação';// VALOR RECEBIDO E ENVIADO COMO STRING
+                break // USANDO CASE SOBREPONHO O VALOR RETORNADO PELO TIPO INSERIDO
+            case '2' : d.tipo = 'Educação';
                 break
-            case '2': d.type = 'Education'
+            case '3' : d.tipo = 'Lazer';
                 break
-            case '3': d.type = 'Leisure'
+            case '4' : d.tipo = 'Saude';
                 break
-            case '4': d.type = 'Health'
+            case '5' : d.tipo = 'Transporte';
                 break
-            case '5': d.type = 'Transport'
         };
-        line.insertCell(1).innerText = `${d.type}`;
-        line.insertCell(2).innerText = `${d.description}`;
-        line.insertCell(3).innerText = `${d.value}`;
+        linha.insertCell(1).innerText = `${d.tipo}`;
+        linha.insertCell(2).innerText = `${d.descricao}`;
+        linha.insertCell(3).innerText = `${d.valor}`;
     });
 };
-
-function searchExpense() {
-
-    let searchExpen = new Despesa(year.value, month.value, day.value, type.value, description.value, value.value);
-
-        console.log(searchExpen)
-    };

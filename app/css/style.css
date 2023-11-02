@@ -1,0 +1,24 @@
+ * {
+      box-sizing: border-box;
+      padding: 0px;
+      margin: 0px;
+  }
+
+h1 {
+  font-size: 1.5em;
+  font-weight: lighter;
+}
+
+#ano, #mes, #descricao, #dia, #valor, #tipo{
+  border-radius: 15px;
+  font-size: 1.1em;
+}
+
+#btns {
+  border-radius: 20px;
+}
+
+tr {
+  border: 1px solid darkblue;
+};
+
