@@ -65,36 +65,35 @@ class Bd {
     };
     //8.1 ----- FUNCAO QUE PESQUISA DESPESA
     pesquisar(despesa) { 
+        // COPIA DA VARIAVEL CONTEDO TODOS OS REGISTROS
         let despesasFiltradas = this.recuperarTodosRegistros() // CHAMO O METODO E RECUPERO TODOS OS REGISTROS
-        console.log(despesa)
-        console.log(despesasFiltradas)
+  
         //AGORA APLICO OS FILTROS DE ANO, MES, DIA DESCRICAO, VALOR
         if (despesa.ano != '') {
-            console.log('Filtro ano')
             despesasFiltradas = despesasFiltradas.filter(d => d.ano == despesa.ano);
-        }; 
-        
+        };
+        //FILTRO MES
         if (despesa.mes != '') {
-            console.log('Filtro mes')
             despesasFiltradas = despesasFiltradas.filter(d => d.mes == despesa.mes);
         };
-
+        // FILTRO DIA
         if (despesa.dia != '') {
-            console.log('Filtro dia')
             despesasFiltradas = despesasFiltradas.filter(d => d.dia == despesa.dia);
         };
-
-        if (despesa.descricao != '') {
-            console.log('Filtro descricao')
+        //FILTRO TIPO
+        if (despesa.tipo != '') {
+            despesasFiltradas = despesasFiltradas.filter(d => d.tipo == despesa.tipo)
+        };
+        //FILTRO DESCRICAO
+        if (despesa.descricao != '' ) {
             despesasFiltradas = despesasFiltradas.filter(d => d.descricao == despesa.descricao);
         };
-
+        // FILTRO VALOR
         if (despesa.valor != '') {
-            console.log('Filtro valor')
             despesasFiltradas = despesasFiltradas.filter(d => d.valor == despesa.valor);
         };
-        
-        console.log(despesasFiltradas);
+        // FUNCAO PESQUISA RETORNA A COMPARAÇÃO ENTRE OS DADOS INSERIDOS E A INSERCAO ATUAL DA PESQUISA
+        return despesasFiltradas;
     };
 };
 
@@ -140,20 +139,15 @@ function cadastrarDespesa() {
     limparInputs();
 };
 //7----- FUNCTION PARA LISTAR OS REGISTROS NA PAGINA DE REGISTRO
-function carregaListaDespesas() {
-    //COPIA DE ARRAY PARA MOSTRAR DESPESAS
-    let despesas = [];
-    despesas = bd.recuperarTodosRegistros(); // FUNCAO CRIADA E CHAMADA DENTRO DO BANCO DE DADOS
+function carregaListaDespesas(despesas = [], filtro = false) {
+    if (despesas.length == 0 && filtro == false) {
+        // SE O PARAMETRO RETORNAR DEFAULT SEM NENHUM PREENCHIMENTO RETORNO TODAS AS DESPESAS
+        despesas = bd.recuperarTodosRegistros(); // FUNCAO CRIADA E CHAMADA DENTRO DO BANCO DE DADOS
+    }; // SE O PARAMETRO RETORNAR OUTROS PARAMETROS ESSE SERÃO MOSTRADOS NA VIEW
+
     // SELECIONANDO O ELEMENTO TBODY DA TABELA
     let listaDespesas = document.getElementById('listaDespesas');
-
-    /*<tr>
-        <td>20/09/2026</td>
-        <td>Alimentacao</td>
-        <td>Ifood</td>
-        <td>20,63</td>
-    </tr> */
-
+    listaDespesas.innerHTML = '';
     //8----- PERCORRER O ARRAY DESPESAS LISTANDO CADA UMA DE FORMA DINAMICA
     despesas.forEach(d => {
         //CRIANDO A LINHA <TR>
@@ -191,5 +185,8 @@ function pesquisarDespesa() {
     // NOVA INSTANCIA  QUE RECEBE OS VALOR QUER SERAO BUSCADOS
     let despesa = new Despesa(ano, mes, dia, tipo, descricao, valor);
     //CHAMO O BD INSIRO A INSTANCIA DESPESA ACIONANDO O METODO PESQUISAR DO BANCO DE DADOS
-    bd.pesquisar(despesa);
+    let despesas = bd.pesquisar(despesa);
+    // 11----- CHAMO A FUNCAO LISTAS DESPESAS E E CARREGO AS DESPESAS FILTRADAS PELO PESQUISAR
+    // ESSAS DESPESAS DISPARARA ALERT FAZENDO COM Q A FUNCAO CARREGALISTADESP.. MOSTRE NA VIEW OS DADOS FILTRADOS
+    carregaListaDespesas(despesas, true);
 };
