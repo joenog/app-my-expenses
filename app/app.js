@@ -63,6 +63,39 @@ class Bd {
         };
         return despesas; // ENVIA AO FIM O ARRAY DE TODAS AS DESPESAS
     };
+    //8.1 ----- FUNCAO QUE PESQUISA DESPESA
+    pesquisar(despesa) { 
+        let despesasFiltradas = this.recuperarTodosRegistros() // CHAMO O METODO E RECUPERO TODOS OS REGISTROS
+        console.log(despesa)
+        console.log(despesasFiltradas)
+        //AGORA APLICO OS FILTROS DE ANO, MES, DIA DESCRICAO, VALOR
+        if (despesa.ano != '') {
+            console.log('Filtro ano')
+            despesasFiltradas = despesasFiltradas.filter(d => d.ano == despesa.ano);
+        }; 
+        
+        if (despesa.mes != '') {
+            console.log('Filtro mes')
+            despesasFiltradas = despesasFiltradas.filter(d => d.mes == despesa.mes);
+        };
+
+        if (despesa.dia != '') {
+            console.log('Filtro dia')
+            despesasFiltradas = despesasFiltradas.filter(d => d.dia == despesa.dia);
+        };
+
+        if (despesa.descricao != '') {
+            console.log('Filtro descricao')
+            despesasFiltradas = despesasFiltradas.filter(d => d.descricao == despesa.descricao);
+        };
+
+        if (despesa.valor != '') {
+            console.log('Filtro valor')
+            despesasFiltradas = despesasFiltradas.filter(d => d.valor == despesa.valor);
+        };
+        
+        console.log(despesasFiltradas);
+    };
 };
 
 // 5.1----- NOVA INSTACIA E BANCO DE DADOS
@@ -145,4 +178,18 @@ function carregaListaDespesas() {
         linha.insertCell(2).innerText = `${d.descricao}`;
         linha.insertCell(3).innerText = `${d.valor}`;
     });
+};
+
+//8---- FUNCTION PARA FILTRAR DESPESAS
+function pesquisarDespesa() {
+    let ano = document.getElementById('ano').value;
+    let mes = document.getElementById('mes').value;
+    let dia = document.getElementById('dia').value;
+    let tipo = document.getElementById('tipo').value;
+    let descricao = document.getElementById("descricao").value;
+    let valor = document.getElementById('valor').value;
+    // NOVA INSTANCIA  QUE RECEBE OS VALOR QUER SERAO BUSCADOS
+    let despesa = new Despesa(ano, mes, dia, tipo, descricao, valor);
+    //CHAMO O BD INSIRO A INSTANCIA DESPESA ACIONANDO O METODO PESQUISAR DO BANCO DE DADOS
+    bd.pesquisar(despesa);
 };
