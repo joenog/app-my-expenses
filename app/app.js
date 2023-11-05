@@ -58,6 +58,8 @@ class Bd {
             if (despesa === null) {
                 continue;
             } else {
+                //DEPESA RECEBE ID = I  -- PARA ADICIONAR COMO NOVO ATRIBUTO A CHAVE DA DESPESA
+                despesa.id = i;
                 despesas.push(despesa);
             };
         };
@@ -94,6 +96,11 @@ class Bd {
         };
         // FUNCAO PESQUISA RETORNA A COMPARAÇÃO ENTRE OS DADOS INSERIDOS E A INSERCAO ATUAL DA PESQUISA
         return despesasFiltradas;
+    };
+
+    //13----- FUNCCAO DENTRO DO BANCO DE DATOS QUE REMOVE ITENS
+    remover(id) {
+        localStorage.removeItem(id);
     };
 };
 
@@ -138,6 +145,7 @@ function cadastrarDespesa() {
     };
     limparInputs();
 };
+
 //7----- FUNCTION PARA LISTAR OS REGISTROS NA PAGINA DE REGISTRO
 function carregaListaDespesas(despesas = [], filtro = false) {
     if (despesas.length == 0 && filtro == false) {
@@ -171,6 +179,20 @@ function carregaListaDespesas(despesas = [], filtro = false) {
         linha.insertCell(1).innerText = `${d.tipo}`;
         linha.insertCell(2).innerText = `${d.descricao}`;
         linha.insertCell(3).innerText = `${d.valor}`;
+
+        //CRIAR BOTAO DE EXCLUSAO
+        let btn = document.createElement("button");
+        btn.className = 'btn btn-sm ';
+        btn.innerHTML = '<i class="fas fa-times"></i>';
+        btn.id = `id_despesa_${d.id}`;
+        linha.insertCell(4).appendChild(btn);
+
+        btn.onclick = function() {
+            //FUNCTION PARA REMOVER DESPESA
+            let id = btn.id.replace('id_despesa_', ''); // REMOVO STIRNG DE INFORM E RECUPERO APENAS A CHAVE
+            bd.remover(id); //CHAMO FUNCION DO BANCO DE DADOS PASSO O ID/CHAVE FORMATADA
+            window.location.reload(); /// RECARREGO PAGINA PARA A VIEW ARUALIZAR INO
+        };
     });
 };
 
