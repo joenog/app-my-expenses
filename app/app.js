@@ -192,6 +192,7 @@ function carregaListaDespesas(despesas = [], filtro = false) {
             let id = btn.id.replace('id_despesa_', ''); // REMOVO STIRNG DE INFORM E RECUPERO APENAS A CHAVE
             bd.remover(id); //CHAMO FUNCION DO BANCO DE DADOS PASSO O ID/CHAVE FORMATADA
             window.location.reload(); /// RECARREGO PAGINA PARA A VIEW ARUALIZAR INO
+
         };
     });
 };
